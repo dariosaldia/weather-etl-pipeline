@@ -1,6 +1,15 @@
 services:
+  weather_etl:
+    container_name: weather_etl
+    build:
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: "postgres:bookworm"
+    container_name: postgres
     ports:
       - 5432:5432
     environment:
@@ -8,9 +17,15 @@ services:
       POSTGRES_USER: postgres
     volumes:
       - ./scripts/init/sql/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
   adminer:
     image: adminer
+    container_name: adminer
     restart: always
     ports:
       - 8080:8080

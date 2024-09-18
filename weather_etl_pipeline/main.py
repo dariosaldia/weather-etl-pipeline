@@ -1,4 +1,5 @@
 import os
+
 from weather_etl_pipeline.extract import LocationData, extract_weather_data
 from weather_etl_pipeline.load import load_data_to_db
 from weather_etl_pipeline.read_coordinates import read_coordinates_from_postgres

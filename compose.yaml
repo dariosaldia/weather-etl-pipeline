@@ -94,6 +94,16 @@ services:
     networks:
       - weather_etl_network
 
+  mock-weather-api:
+    container_name: mock-weather-api
+    build:
+      context: .
+      dockerfile: mock_weather_api/Dockerfile
+    ports:
+      - "5050:5050"
+    networks:
+      - weather_etl_network
+
 networks:
   weather_etl_network:
     name: weather_etl_network

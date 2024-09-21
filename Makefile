@@ -2,8 +2,12 @@
 build-and-push:
 	@docker build -t $(FULL_IMAGE_NAME) . && docker push $(FULL_IMAGE_NAME)
 
+.PHONY: build
+build:
+	@docker compose build
+
 .PHONY: up
-up: down
+up: down build
 	@docker compose up -d
 
 .PHONY: down

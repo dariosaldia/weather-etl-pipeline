@@ -1,0 +1,33 @@
+{
+    "lat": 35.6897,
+    "lon": 139.6922,
+    "timezone": "Asia/Tokyo",
+    "timezone_offset": 32400,
+    "current": {
+        "dt": 1726917513,
+        "sunrise": 1726864099,
+        "sunset": 1726908027,
+        "temp": 25.93,
+        "feels_like": 26.8,
+        "pressure": 1008,
+        "humidity": 85,
+        "dew_point": 23.21,
+        "uvi": 0,
+        "clouds": 99,
+        "visibility": 10000,
+        "wind_speed": 1.34,
+        "wind_deg": 31,
+        "wind_gust": 2.24,
+        "weather": [
+            {
+                "id": 500,
+                "main": "Rain",
+                "description": "light rain",
+                "icon": "10n"
+            }
+        ],
+        "rain": {
+            "1h": 0.69
+        }
+    }
+}

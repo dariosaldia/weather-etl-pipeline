@@ -11,7 +11,7 @@ requests = "^2.32.3"
 pandas = "^2.2.2"
 sqlalchemy = "^2.0.34"
 postgres = "^4.0"
-
+flask = "^3.0.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"

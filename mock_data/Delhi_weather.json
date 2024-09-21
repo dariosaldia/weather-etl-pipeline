@@ -1,0 +1,29 @@
+{
+    "lat": 28.61,
+    "lon": 77.23,
+    "timezone": "Asia/Kolkata",
+    "timezone_offset": 19800,
+    "current": {
+        "dt": 1726917513,
+        "sunrise": 1726879142,
+        "sunset": 1726922958,
+        "temp": 33.1,
+        "feels_like": 37.09,
+        "pressure": 1003,
+        "humidity": 52,
+        "dew_point": 21.92,
+        "uvi": 1.26,
+        "clouds": 40,
+        "visibility": 6000,
+        "wind_speed": 2.06,
+        "wind_deg": 140,
+        "weather": [
+            {
+                "id": 802,
+                "main": "Clouds",
+                "description": "scattered clouds",
+                "icon": "03d"
+            }
+        ]
+    }
+}

@@ -1,3 +1,10 @@
+CREATE ROLE airflow LOGIN PASSWORD 'airflow';
+CREATE DATABASE airflow;
+\c airflow postgres;
+GRANT ALL PRIVILEGES ON DATABASE airflow TO airflow;
+GRANT USAGE ON SCHEMA public TO airflow;
+GRANT CREATE ON SCHEMA public TO airflow;
+
 CREATE ROLE weather_etl LOGIN PASSWORD 'weather_etl';
 
 \c postgres;

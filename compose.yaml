@@ -1,14 +1,4 @@
 services:
-  weather_etl:
-    container_name: weather_etl
-    build:
-      context: .
-    env_file:
-      - .env
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   postgres:
     image: "postgres:bookworm"
     container_name: postgres
@@ -20,14 +10,91 @@ services:
     volumes:
       - ./scripts/init/sql/:/docker-entrypoint-initdb.d/
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      test:
+        [
+          "CMD-SHELL",
+          "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'",
+        ]
       interval: 10s
       timeout: 3s
       retries: 3
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    networks:
+      - weather_etl_network
 
   adminer:
     image: adminer
     container_name: adminer
     restart: always
     ports:
-      - 8080:8080
+      - 8000:8080
+    networks:
+      - weather_etl_network
+
+  airflow-init:
+    container_name: airflow-init
+    image: apache/airflow:2.5.0
+    depends_on:
+      - postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    entrypoint: |
+      /bin/bash -c '
+      airflow db init &&
+      airflow users create \
+        --username admin \
+        --password admin \
+        --firstname Admin \
+        --lastname User \
+        --role Admin \
+        --email admin@example.com
+      '
+    volumes:
+      - ./dags:/opt/airflow/dags
+    networks:
+      - weather_etl_network
+
+  webserver:
+    image: apache/airflow:2.5.0
+    container_name: airflow-ui
+    depends_on:
+      - airflow-init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - /var/run/docker.sock:/var/run/docker.sock  # Mount Docker socket
+    env_file: ".env"
+    command: webserver
+    networks:
+      - weather_etl_network
+
+  scheduler:
+    image: apache/airflow:2.5.0
+    container_name: airflow-scheduler
+    depends_on:
+      - webserver
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - /var/run/docker.sock:/var/run/docker.sock  # Mount Docker socket
+    env_file: ".env"
+    command: scheduler
+    networks:
+      - weather_etl_network
+
+networks:
+  weather_etl_network:
+    name: weather_etl_network
+    driver: bridge
